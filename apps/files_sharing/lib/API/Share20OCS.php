@@ -178,6 +178,10 @@ class Share20OCS extends OCSController {
 			$result['share_with'] = $share->getSharedWith();
 			$result['share_with_displayname'] = $share->getSharedWith();
 			$result['token'] = $share->getToken();
+		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_EMAIL) {
+			$result['share_with'] = $share->getSharedWith();
+			$result['share_with_displayname'] = $share->getSharedWith();
+			$result['token'] = $share->getToken();
 		}
 
 		$result['mail_send'] = $share->getMailSend() ? 1 : 0;
@@ -390,6 +394,9 @@ class Share20OCS extends OCSController {
 
 			$share->setSharedWith($shareWith);
 			$share->setPermissions($permissions);
+		} else if ($shareType === \OCP\Share::SHARE_TYPE_EMAIL) {
+			$share->setPermissions(\OCP\Constants::PERMISSION_READ);
+			$share->setSharedWith($shareWith);
 		} else {
 			throw new OCSBadRequestException($this->l->t('Unknown share type'));
 		}
@@ -456,6 +463,7 @@ class Share20OCS extends OCSController {
 			$shares = array_merge($shares, $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_USER, $node, false, -1, 0));
 			$shares = array_merge($shares, $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_GROUP, $node, false, -1, 0));
 			$shares = array_merge($shares, $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_LINK, $node, false, -1, 0));
+			$shares = array_merge($shares, $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_EMAIL, $node, false, -1, 0));
 			if ($this->shareManager->outgoingServer2ServerSharesAllowed()) {
 				$shares = array_merge($shares, $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_REMOTE, $node, false, -1, 0));
 			}
@@ -531,7 +539,8 @@ class Share20OCS extends OCSController {
 		$userShares = $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_USER, $path, $reshares, -1, 0);
 		$groupShares = $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_GROUP, $path, $reshares, -1, 0);
 		$linkShares = $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_LINK, $path, $reshares, -1, 0);
-		$shares = array_merge($userShares, $groupShares, $linkShares);
+		$mailShares = $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_EMAIL, $path, $reshares, -1, 0);
+		$shares = array_merge($userShares, $groupShares, $linkShares, $mailShares);
 
 		if ($this->shareManager->outgoingServer2ServerSharesAllowed()) {
 			$federatedShares = $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_REMOTE, $path, $reshares, -1, 0);
@@ -761,7 +770,15 @@ class Share20OCS extends OCSController {
 
 		// First check if it is an internal share.
 		try {
-			$share = $this->shareManager->getShareById('ocinternal:'.$id);
+			$share = $this->shareManager->getShareById('ocinternal:' . $id);
+			return $share;
+		} catch (ShareNotFound $e) {
+			// Do nothing, just try the other share type
+		}
+
+		try {
+			$share = $this->shareManager->getShareById('ocMailShare:' . $id);
+			return $share;
 		} catch (ShareNotFound $e) {
 			if (!$this->shareManager->outgoingServer2ServerSharesAllowed()) {
 				throw new ShareNotFound();
