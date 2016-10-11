@@ -152,6 +152,24 @@ class DefaultTokenProvider implements IProvider {
 	}
 
 	/**
+	 * @param string $oldSessionId
+	 * @param string $sessionId
+	 */
+	public function renewSessionToken($oldSessionId, $sessionId) {
+		$token = $this->getToken($oldSessionId);
+
+		$newToken = new DefaultToken();
+		$newToken->setUid($token->getUID());
+		$newToken->setLoginName($token->getLoginName());
+		$newToken->setPassword($token->getPassword());
+		$newToken->setName($token->getName());
+		$newToken->setToken($this->hashToken($sessionId));
+		$newToken->setType(IToken::TEMPORARY_TOKEN);
+		$newToken->setLastActivity($this->time->getTime());
+		$this->mapper->insert($newToken);
+	}
+
+	/**
 	 * @param IToken $savedToken
 	 * @param string $tokenId session token
 	 * @throws InvalidTokenException

@@ -28,6 +28,7 @@ use OCP\IUser;
 
 interface IProvider {
 
+
 	/**
 	 * Create and persist a new token
 	 *
@@ -49,6 +50,12 @@ interface IProvider {
 	 * @return IToken
 	 */
 	public function getToken($tokenId) ;
+
+	/**
+	 * @param string $oldSessionId
+	 * @param string $sessionId
+	 */
+	public function renewSessionToken($oldSessionId, $sessionId);
 
 	/**
 	 * Invalidate (delete) the given session token

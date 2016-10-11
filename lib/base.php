@@ -1039,7 +1039,10 @@ class OC {
 		if ($userSession->tryTokenLogin($request)) {
 			return true;
 		}
-		if ($userSession->loginWithCookie($_COOKIE['nc_username'], $_COOKIE['nc_token'])) {
+		if (isset($_COOKIE['nc_username'])
+			&& isset($_COOKIE['nc_token'])
+			&& isset($_COOKIE['nc_session_id'])
+			&& $userSession->loginWithCookie($_COOKIE['nc_username'], $_COOKIE['nc_token'], $_COOKIE['nc_session_id'])) {
 			return true;
 		}
 		if ($userSession->tryBasicAuthLogin($request, \OC::$server->getBruteForceThrottler())) {

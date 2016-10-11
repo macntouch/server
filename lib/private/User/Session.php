@@ -679,9 +679,10 @@ class Session implements IUserSession, Emitter {
 	 *
 	 * @param string $uid the username
 	 * @param string $currentToken
+	 * @param string $oldSessionId
 	 * @return bool
 	 */
-	public function loginWithCookie($uid, $currentToken) {
+	public function loginWithCookie($uid, $currentToken, $oldSessionId) {
 		$this->session->regenerateId();
 		$this->manager->emit('\OC\User', 'preRememberedLogin', array($uid));
 		$user = $this->manager->get($uid);
@@ -700,7 +701,18 @@ class Session implements IUserSession, Emitter {
 		$this->config->deleteUserValue($uid, 'login_token', $currentToken);
 		$newToken = OC::$server->getSecureRandom()->generate(32);
 		$this->config->setUserValue($uid, 'login_token', $newToken, $this->timeFacory->getTime());
-		$this->setMagicInCookie($user->getUID(), $newToken);
+
+		try {
+			$sessionId = $this->session->getId();
+			$this->tokenProvider->renewSessionToken($oldSessionId, $sessionId);
+		} catch (SessionNotAvailableException $ex) {
+			return false;
+		} catch (InvalidTokenException $ex) {
+			\OC::$server->getLogger()->warning('Renewing session token failed', ['app' => 'core']);
+			return false;
+		}
+
+		$this->setMagicInCookie($user->getUID(), $newToken, $sessionId);
 
 		//login
 		$this->setUser($user);
@@ -732,12 +744,14 @@ class Session implements IUserSession, Emitter {
 	 *
 	 * @param string $username username to be set
 	 * @param string $token
+	 * @param string $sessionId
 	 */
-	public function setMagicInCookie($username, $token) {
+	public function setMagicInCookie($username, $token, $sessionId) {
 		$secureCookie = OC::$server->getRequest()->getServerProtocol() === 'https';
-		$expires = time() + OC::$server->getConfig()->getSystemValue('remember_login_cookie_lifetime', 60 * 60 * 24 * 15);
+		$expires = $this->timeFacory->getTime() + OC::$server->getConfig()->getSystemValue('remember_login_cookie_lifetime', 60 * 60 * 24 * 15);
 		setcookie('nc_username', $username, $expires, OC::$WEBROOT, '', $secureCookie, true);
 		setcookie('nc_token', $token, $expires, OC::$WEBROOT, '', $secureCookie, true);
+		setcookie('nc_session_id', $sessionId, $expires, OC::$WEBROOT, '', $secureCookie, true);
 		setcookie('nc_remember_login', '1', $expires, OC::$WEBROOT, '', $secureCookie, true);
 	}
 
@@ -750,6 +764,7 @@ class Session implements IUserSession, Emitter {
 
 		unset($_COOKIE['nc_username']); //TODO: DI
 		unset($_COOKIE['nc_token']);
+		unset($_COOKIE['nc_session_id']);
 		unset($_COOKIE['nc_remember_login']);
 		setcookie('nc_username', '', time() - 3600, OC::$WEBROOT, '', $secureCookie, true);
 		setcookie('nc_token', '', time() - 3600, OC::$WEBROOT, '', $secureCookie, true);
@@ -758,6 +773,7 @@ class Session implements IUserSession, Emitter {
 		// and Firefox doesn't like it!
 		setcookie('nc_username', '', time() - 3600, OC::$WEBROOT . '/', '', $secureCookie, true);
 		setcookie('nc_token', '', time() - 3600, OC::$WEBROOT . '/', '', $secureCookie, true);
+		setcookie('nc_session_id', '', time() - 3600, OC::$WEBROOT . '/', '', $secureCookie, true);
 		setcookie('nc_remember_login', '', time() - 3600, OC::$WEBROOT . '/', '', $secureCookie, true);
 	}
 
