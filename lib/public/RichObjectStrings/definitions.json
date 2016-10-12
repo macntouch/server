@@ -1,0 +1,147 @@
+{
+  "addressbook": {
+    "author": "Nextcloud",
+    "app": "dav",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the addressbook on the instance",
+        "example": "42"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The display name of the addressbook which should be used in the visual representation",
+        "example": "Contacts"
+      }
+    }
+  },
+  "addressbook-contact": {
+    "author": "Nextcloud",
+    "app": "dav",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the contact on the instance",
+        "example": "42"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The display name of the contact which should be used in the visual representation",
+        "example": "John Doe"
+      }
+    }
+  },
+  "calendar": {
+    "author": "Nextcloud",
+    "app": "dav",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the calendar on the instance",
+        "example": "42"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The display name of the calendar which should be used in the visual representation",
+        "example": "Personal"
+      }
+    }
+  },
+  "calendar-event": {
+    "author": "Nextcloud",
+    "app": "dav",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the event on the instance",
+        "example": "42"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The display name of the event which should be used in the visual representation",
+        "example": "Workout"
+      }
+    }
+  },
+  "file": {
+    "author": "Nextcloud",
+    "app": "dav",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the file on the instance",
+        "example": "42"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The file name which should be used in the visual representation",
+        "example": "file.txt"
+      },
+      "path": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The full path of the file for the user",
+        "example": "path/to/file.txt"
+      },
+      "link": {
+        "since": "9.2.0",
+        "required": false,
+        "description": "The full URL to the file",
+        "example": "http://localhost/index.php/f/42"
+      }
+    }
+  },
+  "user": {
+    "author": "Nextcloud",
+    "app": "core",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the user on the instance",
+        "example": "johndoe"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The display name of the user which should be used in the visual representation",
+        "example": "John Doe"
+      }
+    }
+  },
+  "user-group": {
+    "author": "Nextcloud",
+    "app": "core",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the group on the instance",
+        "example": "supportteam"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The display name of the group which should be used in the visual representation",
+        "example": "Support Team"
+      }
+    }
+  }
+}
