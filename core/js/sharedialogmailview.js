@@ -131,6 +131,9 @@
 
 			var $emailField = this.$el.find('.emailField');
 			if (isLinkShare && $emailField.length !== 0) {
+				/*
+				 * TODO: Need new API to search for autocomplete
+				 *
 				$emailField.autocomplete({
 					minLength: 1,
 					source: function (search, response) {
@@ -154,6 +157,7 @@
 						.append('<a>' + escapeHTML(item.displayname) + "<br>" + escapeHTML(item.email) + '</a>' )
 						.appendTo( ul );
 				};
+				*/
 			}
 			this.delegateEvents();
 

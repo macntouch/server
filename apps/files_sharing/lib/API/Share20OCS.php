@@ -23,6 +23,8 @@
  */
 namespace OCA\Files_Sharing\API;
 
+use OC\Share\MailNotifications;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSException;
@@ -697,6 +699,51 @@ class Share20OCS extends OCSController {
 		}
 
 		return new DataResponse($this->formatShare($share));
+	}
+
+	/**
+	 * Send a notification e-mail for a given share
+	 *
+	 * @param int $id
+	 * @oaran string $toaddress Email of recipient
+	 *
+	 * @throws OCSNotFoundException
+	 * @throws OCSForbiddenException
+	 *
+	 * @return DataResponse
+	 */
+	public function emailLink($id, $toaddress) {
+		try {
+			$share = $this->getShareById($id);
+		} catch (ShareNotFound $e) {
+			throw new OCSNotFoundException('Share not found');
+		}
+
+		if ($share->getShareType() !== \OCP\Share::SHARE_TYPE_LINK) {
+			throw new OCSForbiddenException('Can\'t send link for non link share');
+		}
+
+		$mailer = new MailNotifications(
+			$this->currentUser,
+			\OC::$server->getL10N('core'),
+			\OC::$server->getMailer(),
+			\OC::$server->getLogger(),
+			new \OCP\Defaults(),
+			$this->urlGenerator
+		);
+
+		$failed = $mailer->sendLinkShareMail(
+			$toaddress,
+			$share->getNode()->getName(),
+			$this->urlGenerator->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', ['token' => $share->getToken()]),
+			$share->getExpirationDate() !== null ? $share->getExpirationDate()->getTimestamp() : null
+		);
+
+		if ($failed === []) {
+			return new DataResponse([]);
+		} else {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
 	}
 
 	/**

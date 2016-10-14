@@ -460,33 +460,17 @@
 		 *
 		 * @param {string} recipientEmail recipient email address
 		 */
-		sendEmailPrivateLink: function(recipientEmail) {
-			var deferred = $.Deferred();
-			var itemType = this.get('itemType');
-			var itemSource = this.get('itemSource');
-			var linkShare = this.get('linkShare');
+		sendEmailPrivateLink: function(recipientEmail, options) {
+			var shareId = this.get('linkShare').id;
 
-			$.post(
-				OC.generateUrl('core/ajax/share.php'), {
-					action: 'email',
-					toaddress: recipientEmail,
-					link: linkShare.link,
-					itemType: itemType,
-					itemSource: itemSource,
-					file: this.fileInfoModel.get('name'),
-					expiration: linkShare.expiration || ''
+			return $.ajax({
+				type: 'POST',
+				url: this._getUrl('shares/' + encodeURIComponent(shareId) + '/emailLink'),
+				data: {
+					toaddress: recipientEmail
 				},
-				function(result) {
-					if (!result || result.status !== 'success') {
-						// FIXME: a model should not show dialogs
-						OC.dialogs.alert(result.data.message, t('core', 'Error while sending notification'));
-						deferred.reject();
-					} else {
-						deferred.resolve();
-					}
+				dataType: 'json'
 			});
-
-			return deferred.promise();
 		},
 
 		/**

@@ -69,6 +69,11 @@ $application->registerRoutes($this, [
 			'url'  => '/api/v1/shares/{id}',
 			'verb' => 'DELETE',
 		],
+		[
+			'name' => 'ShareAPI#emailLink',
+			'url'  => '/api/v1/shares/{id}/emailLink',
+			'verb' => 'POST',
+		],
 		/*
 		 * OCS Sharee API
 		 */
