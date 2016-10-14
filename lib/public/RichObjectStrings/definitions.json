@@ -37,6 +37,31 @@
       }
     }
   },
+  "announcement": {
+    "author": "Joas Schilling",
+    "app": "announcementcenter",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the announcement on the instance",
+        "example": "42"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The announcement subject which should be used in the visual representation",
+        "example": "file.txt"
+      },
+      "link": {
+        "since": "9.2.0",
+        "required": false,
+        "description": "The full URL to the file",
+        "example": "http://localhost/index.php/apps/announcements/#23"
+      }
+    }
+  },
   "calendar": {
     "author": "Nextcloud",
     "app": "dav",
