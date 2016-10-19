@@ -131,6 +131,37 @@
       }
     }
   },
+  "systemtag": {
+    "author": "Nextcloud",
+    "app": "core",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the systemtag on the instance",
+        "example": "23"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The display name of the systemtag which should be used in the visual representation",
+        "example": "Project 1"
+      },
+      "visibility": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "If the user can see the systemtag",
+        "example": "1"
+      },
+      "assignable": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "If the user can assign the systemtag",
+        "example": "0"
+      }
+    }
+  },
   "user": {
     "author": "Nextcloud",
     "app": "core",
