@@ -131,6 +131,25 @@
       }
     }
   },
+  "pending-federated-share": {
+    "author": "Nextcloud",
+    "app": "dav",
+    "since": "9.2.0",
+    "parameters": {
+      "id": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The id used to identify the federated share on the instance",
+        "example": "42"
+      },
+      "name": {
+        "since": "9.2.0",
+        "required": true,
+        "description": "The name of the shared item which should be used in the visual representation",
+        "example": "file.txt"
+      }
+    }
+  },
   "systemtag": {
     "author": "Nextcloud",
     "app": "core",
@@ -178,6 +197,12 @@
         "required": true,
         "description": "The display name of the user which should be used in the visual representation",
         "example": "John Doe"
+      },
+      "server": {
+        "since": "9.2.0",
+        "required": false,
+        "description": "The URL of the instance the user lives on",
+        "example": "localhost"
       }
     }
   },
