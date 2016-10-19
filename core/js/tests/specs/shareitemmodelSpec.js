@@ -494,18 +494,12 @@ describe('OC.Share.ShareItemModel', function() {
 
 			expect(res.state()).toEqual('pending');
 			expect(fakeServer.requests.length).toEqual(1);
-			expect(fakeServer.requests[0].url).toEqual(OC.generateUrl('core/ajax/share.php'));
+			expect(fakeServer.requests[0].url).toEqual(OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares/20/emailLink?format=json');
 			expect(OC.parseQueryString(fakeServer.requests[0].requestBody)).toEqual(
 				{
-					action: 'email',
 					toaddress: 'foo@bar.com',
-					link: model.get('linkShare').link,
-					itemType: 'file',
-					itemSource: '123',
-					file: 'shared_file_name.txt',
-					expiration: ''
 				}
-			)
+			);
 
 			fakeServer.requests[0].respond(
 				200,
@@ -544,21 +538,15 @@ describe('OC.Share.ShareItemModel', function() {
 
 			expect(res.state()).toEqual('pending');
 			expect(fakeServer.requests.length).toEqual(1);
-			expect(fakeServer.requests[0].url).toEqual(OC.generateUrl('core/ajax/share.php'));
+			expect(fakeServer.requests[0].url).toEqual(OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares/20/emailLink?format=json');
 			expect(OC.parseQueryString(fakeServer.requests[0].requestBody)).toEqual(
 				{
-					action: 'email',
-					toaddress: 'foo@bar.com',
-					link: model.get('linkShare').link,
-					itemType: 'file',
-					itemSource: '123',
-					file: 'shared_file_name.txt',
-					expiration: ''
+					toaddress: 'foo@bar.com'
 				}
-			)
+			);
 
 			fakeServer.requests[0].respond(
-				200,
+				403,
 				{ 'Content-Type': 'application/json' },
 				JSON.stringify({data: {message: 'fail'}, status: 'error'})
 			);
